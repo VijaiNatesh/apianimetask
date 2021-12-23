@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<style>
+    #customers {
+        font-family: Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 50%;
+    }
+
+    #customers td,
+    #customers th {
+        border: 1px solid #ddd;
+        padding: 8px;
+        font-size: 10px
+    }
+
+    #customers tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    #customers tr:hover {
+        background-color: #ddd;
+    }
+
+    #customers th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #04AA6D;
+        color: white;
+    }
+
+    #customersFacts {
+        font-family: Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 50%;
+    }
+
+    #customersFacts td,
+    #customersFacts th {
+        border: 1px solid #ddd;
+        padding: 8px;
+        font-size: 10px
+    }
+
+    #customersFacts tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    #customersFacts tr:hover {
+        background-color: #ddd;
+    }
+
+    #customersFacts th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: left;
+        background-color: #04AA6D;
+        color: white;
+    }
+
+
+    #addButton {
+        margin: 10px
+    }
+
+    .add-anime-form {
+        margin: 10px;
+    }
+
+    #label {
+        margin: 10px;
+    }
+</style>
+
+<body>
+    <table id="customers">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Anime Name</th>
+                <th>Anime Image</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="animes">
+        </tbody>
+    </table>
+    <h3 id="title"></h3>
+    <table id="customersFacts">
+        <thead>
+            <tr>
+                <th>Fact ID</th>
+                <th>Fact</th>
+            </tr>
+        </thead>
+        <tbody id="animesFacts">
+        </tbody>
+    </table>
+
+
+
+    <script> 
+
+
+        function getAnime() {
+            fetch("https://anime-facts-rest-api.herokuapp.com/api/v1")
+                .then(res => res.json())
+                .then(data => {
+                    let data1 = data.data;
+                    initialize(data1)
+                })
+                .catch(err => console.log('Error:', err.message));
+        }
+        getAnime()
+        function initialize(data1) {
+            console.log(data1)
+            if (data1.length > 0) {
+                var temp = "";
+                data1.forEach((itemData) => {
+                    temp += "<tr>";
+                    temp += "<td>" + itemData.anime_id + "</td>";
+                    temp += "<td>" + itemData.anime_name + "</td>";
+                    temp += "<td>" + itemData.anime_img + "</td>";
+                    temp += "<td>" + `<button onclick = 'getFacts("${itemData.anime_name}")'>Facts</button>` + "</td>"
+                    temp += "</tr>";
+                });
+                document.getElementById('animes').innerHTML = temp;
+            }
+
+        }
+        function getFacts(anime_name) {
+            var animeName = `${anime_name}`
+            fetch(`https://anime-facts-rest-api.herokuapp.com/api/v1/${anime_name}`)
+                .then(res => res.json())
+                .then(data => {
+                    let data2 = data.data;
+                    initialize1(data2)
+                },
+                    document.getElementById('title').innerHTML = `Facts of ${animeName}`
+                )
+
+        }
+        function initialize1(data2) {
+            console.log(data2)
+            if (data2.length > 0) {
+                var temp1 = "";
+                data2.forEach((itemData) => {
+                    temp1 += "<tr>";
+                    temp1 += "<td>" + itemData.fact_id + "</td>";
+                    temp1 += "<td>" + itemData.fact + "</td>";
+                    temp1 += "</tr>";
+
+                });
+                document.getElementById('animesFacts').innerHTML = temp1;
+
+            }
+        } 
+    </script>
+</body>
+
+</html>
